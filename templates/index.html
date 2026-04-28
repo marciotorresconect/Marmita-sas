@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head><title>Marmitaria</title></head>
+<body>
+    <h1>Faça seu Pedido</h1>
+    <form action="/pedido" method="POST">
+        <input type="text" name="cliente" placeholder="Seu Nome" required><br>
+        <input type="text" name="whatsapp" placeholder="Seu WhatsApp" required><br>
+        <select name="tamanho">
+            <option value="Média">Média (R$ 20)</option>
+            <option value="Grande">Grande (R$ 25)</option>
+        </select><br>
+        <p>Com refrigerante (+R$ 5)? 
+            <input type="radio" name="refrigerante" value="Sim"> Sim
+            <input type="radio" name="refrigerante" value="Não" checked> Não
+        </p>
+        <select name="pagamento">
+            <option value="Pix">Pix</option>
+            <option value="Cartão">Cartão</option>
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Fiado">Fiado (Pagar depois)</option>
+        </select><br><br>
+        <button type="submit">Finalizar Pedido</button>
+    </form>
+</body>
+</html>

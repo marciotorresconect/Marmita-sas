@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status do Pedido</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #fff; padding: 40px; }
+        .box { border: 2px solid #3498db; padding: 20px; border-radius: 15px; }
+        .status { font-size: 2em; color: #3498db; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>Olá, {{.Cliente}}!</h1>
+        <p>Seu pedido (Marmita {{.Tamanho}}) está:</p>
+        <div class="status">{{.Status}}</div>
+    </div>
+    <p>Esta página atualiza sozinha.</p>
+    <script>setTimeout(() => { location.reload(); }, 15000);</script>
+</body>
+</html>
