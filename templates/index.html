@@ -1,26 +1,62 @@
 <!DOCTYPE html>
-<html>
-<head><title>Marmitaria</title></head>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marmitaria Express</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card-pedido { border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn-finalizar { background-color: #25d366; border: none; color: white; font-weight: bold; }
+    </style>
+</head>
 <body>
-    <h1>Faça seu Pedido</h1>
-    <form action="/pedido" method="POST">
-        <input type="text" name="cliente" placeholder="Seu Nome" required><br>
-        <input type="text" name="whatsapp" placeholder="Seu WhatsApp" required><br>
-        <select name="tamanho">
-            <option value="Média">Média (R$ 20)</option>
-            <option value="Grande">Grande (R$ 25)</option>
-        </select><br>
-        <p>Com refrigerante (+R$ 5)? 
-            <input type="radio" name="refrigerante" value="Sim"> Sim
-            <input type="radio" name="refrigerante" value="Não" checked> Não
-        </p>
-        <select name="pagamento">
-            <option value="Pix">Pix</option>
-            <option value="Cartão">Cartão</option>
-            <option value="Dinheiro">Dinheiro</option>
-            <option value="Fiado">Fiado (Pagar depois)</option>
-        </select><br><br>
-        <button type="submit">Finalizar Pedido</button>
-    </form>
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card card-pedido p-4">
+                    <h2 class="text-center mb-4">🍱 Marmita Express</h2>
+                    <form action="/pedido" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Nome Completo</label>
+                            <input type="text" name="cliente" class="form-control" placeholder="Ex: Marcio Torres" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">WhatsApp (com DDD)</label>
+                            <input type="number" name="whatsapp" class="form-control" placeholder="13999999999" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tamanho da Marmita</label>
+                            <select name="tamanho" class="form-select">
+                                <option value="Média">Média - R$ 20,00</option>
+                                <option value="Grande">Grande - R$ 25,00</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label d-block">Refrigerante (+R$ 5,00)?</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="refrigerante" value="Sim"> Sim
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="refrigerante" value="Não" checked> Não
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Forma de Pagamento</label>
+                            <select name="pagamento" class="form-select">
+                                <option value="Pix">Pix</option>
+                                <option value="Cartão">Cartão (Maquininha)</option>
+                                <option value="Dinheiro">Dinheiro</option>
+                                <option value="Fiado">Fiado (Pagar depois)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-finalizar w-100 py-3 mt-2">FINALIZAR PEDIDO</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
+

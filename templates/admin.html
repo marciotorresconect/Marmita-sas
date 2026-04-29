@@ -1,47 +1,40 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Painel Admin - Marmita</title>
-    <style>
-        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
-        .pedido-card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 10px solid #2ecc71; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .fiado { border-left-color: #e74c3c; }
-        .btn-excluir { background: #e74c3c; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; }
-        .btn-receber { background: #f1c40f; color: black; border: none; padding: 8px; border-radius: 5px; cursor: pointer; }
-        .btn-salvar { background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <h1>Painel de Pedidos</h1>
-    <a href="/admin">🔄 Atualizar Painel</a>
-    <hr>
-    {{range .pedidos}}
-    <div class="pedido-card {{if not .Pago}}fiado{{end}}">
-        <h3>{{.Cliente}} {{if not .Pago}}<span style="color:red;">[FIADO]</span>{{end}}</h3>
-        <p>Tamanho: {{.Tamanho}} | Valor: <strong>R$ {{.Valor}}</strong> | Pagamento: {{.Pagamento}}</p>
-        <p>Status Atual: <strong>{{.Status}}</strong></p>
-        
-        <form action="/update/{{.ID}}" method="POST" style="display:inline">
-            <select name="status">
-                <option value="Preparando" {{if eq .Status "Preparando"}}selected{{end}}>Preparando</option>
-                <option value="Enviando" {{if eq .Status "Enviando"}}selected{{end}}>A Caminho</option>
-                <option value="Entregue" {{if eq .Status "Entregue"}}selected{{end}}>Entregue</option>
-            </select>
-            <button type="submit" class="btn-salvar">Atualizar Status</button>
-        </form>
-
-        {{if not .Pago}}
-        <form action="/pagar/{{.ID}}" method="POST" style="display:inline">
-            <button type="submit" class="btn-receber">Marcar como Pago</button>
-        </form>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<div class="container py-3">
+    <h1 class="mb-4">📋 Painel de Pedidos</h1>
+    <div class="row">
+        {{range .pedidos}}
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card {{if not .Pago}}border-danger shadow{{else}}border-success shadow-sm{{end}}">
+                <div class="card-body">
+                    <h5 class="card-title">{{.Cliente}}</h5>
+                    <p class="card-text mb-1">📦 {{.Tamanho}} | 💰 R$ {{.Valor}}</p>
+                    <p class="badge {{if eq .Status "Preparando"}}bg-warning{{else if eq .Status "Enviando"}}bg-primary{{else}}bg-success{{end}}">
+                        {{.Status}}
+                    </p>
+                    {{if not .Pago}}<p class="text-danger fw-bold small">🛑 FIADO / NÃO PAGO</p>{{end}}
+                    <hr>
+                    <div class="d-flex flex-wrap gap-2">
+                        <form action="/update/{{.ID}}" method="POST" class="d-flex gap-1">
+                            <select name="status" class="form-select form-select-sm">
+                                <option value="Preparando">Preparando</option>
+                                <option value="Enviando">A Caminho</option>
+                                <option value="Entregue">Entregue</option>
+                            </select>
+                            <button class="btn btn-sm btn-dark">Ok</button>
+                        </form>
+                        {{if not .Pago}}
+                        <form action="/pagar/{{.ID}}" method="POST">
+                            <button class="btn btn-sm btn-success">Pago</button>
+                        </form>
+                        {{end}}
+                        <form action="/delete/{{.ID}}" method="POST">
+                            <button class="btn btn-sm btn-outline-danger">X</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         {{end}}
-
-        <form action="/delete/{{.ID}}" method="POST" style="display:inline" onsubmit="return confirm('Excluir este pedido permanentemente?')">
-            <button type="submit" class="btn-excluir">Excluir</button>
-        </form>
     </div>
-    {{end}}
-</body>
-</html>
+</div>
 

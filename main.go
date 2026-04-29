@@ -2,8 +2,10 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Criar tabelas atualizadas
+	// Criar tabela se não existir
 	db.Exec(`CREATE TABLE IF NOT EXISTS pedidos (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		cliente TEXT,
@@ -35,12 +37,12 @@ func main() {
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*")
 
-	// CLIENTE: Tela de Pedido
+	// --- ROTAS DO CLIENTE ---
+
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
 
-	// CLIENTE: Processar Pedido
 	r.POST("/pedido", func(c *gin.Context) {
 		cliente := c.PostForm("cliente")
 		whatsapp := c.PostForm("whatsapp")
@@ -59,27 +61,36 @@ func main() {
 			cliente, whatsapp, tamanho, refri, pagamento, "Preparando", valor, pago)
 
 		if err != nil {
-			c.String(500, "Erro ao salvar")
+			c.String(500, "Erro ao salvar pedido")
 			return
 		}
-		// Redireciona para o status do próprio cliente
-		c.Redirect(http.StatusFound, "/status/"+whatsapp)
+
+		// USO DO FMT E NET/URL (Geração da mensagem do WhatsApp)
+		seuNumero := "5513991234567" // ⚠️ COLOQUE SEU NÚMERO AQUI
+		texto := fmt.Sprintf("🍱 *NOVO PEDIDO!*\n\n*Cliente:* %s\n*Marmita:* %s\n*Pagamento:* %s\n*Total:* R$ %.2f", 
+			cliente, tamanho, pagamento, valor)
+		
+		linkWhats := "https://api.whatsapp.com/send?phone=" + seuNumero + "&text=" + url.QueryEscape(texto)
+		
+		// Envia para o WhatsApp (ou mude para /status/ se preferir)
+		c.Redirect(http.StatusFound, linkWhats)
 	})
 
-	// CLIENTE: Ver status do seu pedido
 	r.GET("/status/:whatsapp", func(c *gin.Context) {
 		whatsapp := c.Param("whatsapp")
 		var p struct { Cliente, Tamanho, Status string }
+		
 		err := db.QueryRow("SELECT cliente, tamanho, status FROM pedidos WHERE whatsapp = ? ORDER BY id DESC LIMIT 1", whatsapp).Scan(&p.Cliente, &p.Tamanho, &p.Status)
 		
 		if err != nil {
-			c.String(404, "Nenhum pedido encontrado para este número.")
+			c.String(404, "Nenhum pedido encontrado.")
 			return
 		}
 		c.HTML(http.StatusOK, "status.html", p)
 	})
 
-	// ADMIN: Painel Principal
+	// --- ROTAS DO ADMIN ---
+
 	r.GET("/admin", func(c *gin.Context) {
 		rows, _ := db.Query("SELECT id, cliente, tamanho, status, pagamento, valor, pago FROM pedidos ORDER BY id DESC")
 		var pedidos []map[string]interface{}
@@ -96,19 +107,16 @@ func main() {
 		c.HTML(http.StatusOK, "admin.html", gin.H{"pedidos": pedidos})
 	})
 
-	// ADMIN: Atualizar Status
 	r.POST("/update/:id", func(c *gin.Context) {
 		db.Exec("UPDATE pedidos SET status = ? WHERE id = ?", c.PostForm("status"), c.Param("id"))
 		c.Redirect(http.StatusFound, "/admin")
 	})
 
-	// ADMIN: Marcar como Pago (Fiado -> Pago)
 	r.POST("/pagar/:id", func(c *gin.Context) {
 		db.Exec("UPDATE pedidos SET pago = true WHERE id = ?", c.Param("id"))
 		c.Redirect(http.StatusFound, "/admin")
 	})
 
-	// ADMIN: Excluir Pedido
 	r.POST("/delete/:id", func(c *gin.Context) {
 		db.Exec("DELETE FROM pedidos WHERE id = ?", c.Param("id"))
 		c.Redirect(http.StatusFound, "/admin")
@@ -118,4 +126,3 @@ func main() {
 	if port == "" { port = "8080" }
 	r.Run(":" + port)
 }
-
