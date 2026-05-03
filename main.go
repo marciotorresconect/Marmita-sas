@@ -66,7 +66,7 @@ func main() {
 		}
 
 		// USO DO FMT E NET/URL (Geração da mensagem do WhatsApp)
-		seuNumero := "5513996554848" // ⚠️ COLOQUE SEU NÚMERO AQUI
+		seuNumero := "5535998022156" // ⚠️ COLOQUE SEU NÚMERO AQUI
 		texto := fmt.Sprintf("🍱 *NOVO PEDIDO!*\n\n*Cliente:* %s\n*Marmita:* %s\n*Pagamento:* %s\n*Total:* R$ %.2f", 
 			cliente, tamanho, pagamento, valor)
 		
