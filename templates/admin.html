@@ -1,40 +1,72 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<div class="container py-3">
-    <h1 class="mb-4">📋 Painel de Pedidos</h1>
-    <div class="row">
-        {{range .pedidos}}
-        <div class="col-12 col-md-4 mb-3">
-            <div class="card {{if not .Pago}}border-danger shadow{{else}}border-success shadow-sm{{end}}">
-                <div class="card-body">
-                    <h5 class="card-title">{{.Cliente}}</h5>
-                    <p class="card-text mb-1">📦 {{.Tamanho}} | 💰 R$ {{.Valor}}</p>
-                    <p class="badge {{if eq .Status "Preparando"}}bg-warning{{else if eq .Status "Enviando"}}bg-primary{{else}}bg-success{{end}}">
-                        {{.Status}}
-                    </p>
-                    {{if not .Pago}}<p class="text-danger fw-bold small">🛑 FIADO / NÃO PAGO</p>{{end}}
-                    <hr>
-                    <div class="d-flex flex-wrap gap-2">
-                        <form action="/update/{{.ID}}" method="POST" class="d-flex gap-1">
-                            <select name="status" class="form-select form-select-sm">
-                                <option value="Preparando">Preparando</option>
-                                <option value="Enviando">A Caminho</option>
-                                <option value="Entregue">Entregue</option>
-                            </select>
-                            <button class="btn btn-sm btn-dark">Ok</button>
-                        </form>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Pedidos - Marmita Express</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">📋 Painel de Pedidos</h1>
+            <a href="/admin/fechamento" class="btn btn-danger">🔒 Fechar Caixa e Enviar PDF</a>
+        </div>
+
+        <div class="card border-success shadow-sm mb-4">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="card-title text-success mb-0">💰 Total Geral em Pedidos</h5>
+                    <small class="text-muted">Soma de todos os pedidos listados</small>
+                </div>
+                <h2 class="text-success mb-0">R$ {{printf "%.2f" .TotalGeral}}</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            {{range .pedidos}}
+            <div class="col-12 col-md-4 mb-3">
+                <div class="card {{if not .Pago}}border-danger shadow{{else}}border-success shadow-sm{{end}}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{.Cliente}}</h5>
+                        <p class="card-text mb-1">📦 {{.Tamanho}} | 💰 R$ {{printf "%.2f" .Valor}}</p>
+                        <p class="badge {{if eq .Status "Preparando"}}bg-warning{{else if eq .Status "Enviando"}}bg-primary{{else}}bg-success{{end}}">
+                            {{.Status}}
+                        </p>
                         {{if not .Pago}}
-                        <form action="/pagar/{{.ID}}" method="POST">
-                            <button class="btn btn-sm btn-success">Pago</button>
-                        </form>
+                            <p class="text-danger fw-bold small mb-0">🛑 FIADO / NÃO PAGO</p>
                         {{end}}
-                        <form action="/delete/{{.ID}}" method="POST">
-                            <button class="btn btn-sm btn-outline-danger">X</button>
-                        </form>
+                        <hr>
+                        <div class="d-flex flex-wrap gap-2">
+                            <form action="/update/{{.ID}}" method="POST" class="d-flex gap-1 align-items-center">
+                                <select name="status" class="form-select form-select-sm">
+                                    <option value="Preparando" {{if eq .Status "Preparando"}}selected{{end}}>Preparando</option>
+                                    <option value="Enviando" {{if eq .Status "Enviando"}}selected{{end}}>A Caminho</option>
+                                    <option value="Entregue" {{if eq .Status "Entregue"}}selected{{end}}>Entregue</option>
+                                </select>
+                                <button class="btn btn-sm btn-dark">Ok</button>
+                            </form>
+                            {{if not .Pago}}
+                            <form action="/pagar/{{.ID}}" method="POST">
+                                <button class="btn btn-sm btn-success">Pago</button>
+                            </form>
+                            {{end}}
+                            <form action="/delete/{{.ID}}" method="POST">
+                                <button class="btn btn-sm btn-outline-danger">X</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
+            {{else}}
+            <div class="col-12">
+                <div class="alert alert-info text-center" role="alert">
+                    Nenhum pedido no momento.
+                </div>
+            </div>
+            {{end}}
         </div>
-        {{end}}
     </div>
-</div>
+</body>
+</html>
 
