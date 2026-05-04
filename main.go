@@ -143,6 +143,25 @@ func main() {
 		c.Redirect(http.StatusFound, "/admin")
 	})
 
+	// ROTA: Redirecionamento para evitar o erro 404 caso o cliente acesse apenas o número
+	r.GET("/:whatsapp", func(c *gin.Context) {
+		whatsapp := c.Param("whatsapp")
+		isNumber := true
+		for _, ch := range whatsapp {
+			if ch < '0' || ch > '9' {
+				isNumber = false
+				break
+			}
+		}
+		
+		if isNumber && len(whatsapp) >= 10 {
+			c.Redirect(http.StatusFound, "/status/"+whatsapp)
+			return
+		}
+		
+		c.String(404, "Página não encontrada")
+	})
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
