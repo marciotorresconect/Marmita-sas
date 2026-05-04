@@ -95,7 +95,28 @@ func main() {
 		err := db.QueryRow("SELECT cliente, tamanho, status FROM pedidos WHERE whatsapp = ? ORDER BY id DESC LIMIT 1", whatsapp).Scan(&p.Cliente, &p.Tamanho, &p.Status)
 
 		if err != nil {
-			c.String(404, "Nenhum pedido encontrado para este número.")
+			// Retorna página amigável ao invés de tela preta
+			c.Header("Content-Type", "text/html")
+			c.String(404, `<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Não Encontrado</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Poppins', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: none; padding: 40px; text-align: center; max-width: 400px; width: 100%; background: #ffffff; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h3 class="text-danger mb-3">⚠️ Pedido Não Encontrado</h3>
+        <p class="text-muted">Nenhum pedido foi localizado para este número de WhatsApp. Por favor, certifique-se de que o pedido foi enviado ou faça um novo pedido.</p>
+        <a href="/" class="btn btn-primary mt-3 w-100">Fazer Novo Pedido</a>
+    </div>
+</body>
+</html>`)
 			return
 		}
 		c.HTML(http.StatusOK, "status.html", p)
@@ -159,7 +180,27 @@ func main() {
 			return
 		}
 		
-		c.String(404, "Página não encontrada")
+		c.Header("Content-Type", "text/html")
+		c.String(404, `<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Não Encontrada</title>
+    <style>
+        body { background: #f4f7f6; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; }
+        a { text-decoration: none; display: inline-block; padding: 10px 20px; background: #0d6efd; color: white; border-radius: 5px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Página Não Encontrada</h2>
+        <p>O endereço que você está tentando acessar não existe ou o número é inválido.</p>
+        <a href="/">Voltar para o Início</a>
+    </div>
+</body>
+</html>`)
 	})
 
 	port := os.Getenv("PORT")
@@ -168,4 +209,3 @@ func main() {
 	}
 	r.Run(":" + port)
 }
-
