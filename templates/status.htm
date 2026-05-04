@@ -13,7 +13,7 @@
         }
         .status-container {
             max-width: 500px;
-            margin: 50px auto;
+            margin: 40px auto;
             padding: 20px;
         }
         .card-status {
@@ -30,14 +30,13 @@
             text-align: center;
         }
         .status-icon {
-            font-size: 4rem;
+            font-size: 3.5rem;
             margin-bottom: 10px;
         }
         .progress {
             height: 12px;
             border-radius: 10px;
             background-color: #e9ecef;
-
         }
         .status-text {
             font-weight: 600;
@@ -49,6 +48,18 @@
             border-radius: 15px;
             padding: 15px;
         }
+        .btn-whatsapp {
+            background-color: #25d366;
+            color: white;
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 12px 20px;
+            border: none;
+        }
+        .btn-whatsapp:hover {
+            background-color: #128c7e;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -59,11 +70,13 @@
             <div class="status-icon">
                 {{if eq .Status "Preparando"}}👨‍🍳{{else if eq .Status "Enviando"}}🛵{{else}}✅{{end}}
             </div>
-            <h2 class="mb-0">Olá, {{.Cliente}}!</h2>
+            <h2 class="mb-0">Pedido Recebido!</h2>
         </div>
         
         <div class="card-body p-4 text-center">
-            <p class="text-muted">Status do seu pedido:</p>
+            <p class="text-muted mb-1">Olá, **{{.Cliente}}**!</p>
+            <p class="text-secondary small mb-4">Acompanhe o seu pedido abaixo:</p>
+            
             <h3 class="status-text {{if eq .Status "Preparando"}}text-warning{{else if eq .Status "Enviando"}}text-primary{{else}}text-success{{end}} mb-4">
                 {{.Status}}
             </h3>
@@ -78,12 +91,16 @@
 
             <div class="info-pedido mb-4 text-start">
                 <p class="mb-1"><strong>Pedido:</strong> Marmita {{.Tamanho}}</p>
-                <p class="mb-0 text-secondary small">O status é atualizado em tempo real pelo restaurante.</p>
+                <p class="mb-0 text-secondary small">A página atualiza em tempo real conforme o preparo avança.</p>
             </div>
 
-            <div class="d-grid">
-                <button class="btn btn-outline-secondary btn-sm" onclick="location.reload()">
-                    🔄 Atualizar Status Manualmente
+            <div class="d-grid gap-2">
+                <a href="https://api.whatsapp.com/send?phone=5513996554848&text=Ol%C3%A1%2C+gostaria+de+confirmar+meu+pedido%3A+Marmita+{{.Tamanho}}+no+nome+de+{{.Cliente}}" 
+                   class="btn btn-whatsapp shadow-sm" target="_blank">
+                    📱 Enviar Pedido no WhatsApp
+                </a>
+                <button class="btn btn-outline-secondary btn-sm mt-2" onclick="location.reload()">
+                    🔄 Atualizar Status
                 </button>
             </div>
         </div>
@@ -97,8 +114,9 @@
 <script>
     setTimeout(function(){
         location.reload();
-    }, 20000); // 20 segundos
+    }, 20000);
 </script>
 
 </body>
 </html>
+
